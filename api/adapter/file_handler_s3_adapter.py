@@ -1,11 +1,12 @@
 import os
+import io
 import uuid
 
 from fastapi import UploadFile, HTTPException
 
 from api.port.file_handler import FileHandlerProvider
 
-from api.config.aws_s3 import S3ClientSession
+from api.config.aws_s3 import S3Config
 from api.config.dynaconf import settings
 
 from botocore.exceptions import ClientError
@@ -13,17 +14,24 @@ from botocore.exceptions import ClientError
 
 class FileHandlerS3Adapter(FileHandlerProvider):
     def __init__(self):
-        self._s3_client = S3ClientSession
+        self._session = S3Config()
         self._bucket_name = settings.AWS_S3_BUCKET_NAME
 
     def upload_file(self, file: UploadFile):
         try:
-            file_uuid = str(uuid.uuid4())
-            file_extension = os.path.splitext(file.filename)[1]
-            s3_object_key = f"{file_uuid}{file_extension}"
+            contents = file.file.read()
+            temp_file = io.BytesIO()
+            temp_file.write(contents)
+            temp_file.seek(0)
 
-            self._s3_client.upload_fileobj(
-                file.file, self._bucket_name, s3_object_key)
+            file_uuid = str(uuid.uuid4())
+            file_type = os.path.splitext(file.filename)[1]
+            s3_object_key = f"{file_uuid}{file_type}"
+
+            self._session.s3_client().upload_fileobj(
+                temp_file, self._bucket_name, s3_object_key)
+            temp_file.close()
+
         except ClientError as e:
             error_message = e.response["message"]
             error_code = e.response["Error"]["Code"]
