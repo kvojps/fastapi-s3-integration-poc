@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile
+from fastapi.responses import StreamingResponse
 
 from api.service.file_handler import FileHandlerService
 
@@ -25,6 +26,11 @@ def upload_file(file: UploadFile):
     return {"status": "Upload de arquivo concluído com sucesso!"}
 
 
-@app.post("/upload/url")
+@app.get("/upload/url")
 def create_upload_url():
     return service.create_upload_url()
+
+
+@app.get("/download/{file_name}")
+def download_file(file_name: str) -> StreamingResponse:
+    return service.download_file(file_name)

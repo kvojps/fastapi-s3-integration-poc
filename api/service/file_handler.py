@@ -1,4 +1,5 @@
 from fastapi import UploadFile
+from fastapi.responses import StreamingResponse
 
 from api.port.file_handler import FileHandlerProvider
 
@@ -12,3 +13,6 @@ class FileHandlerService:
 
     def create_upload_url(self) -> str:
         return self._file_handler_provider.create_upload_url()
+
+    def download_file(self, file_name: str) -> StreamingResponse:
+        return self._file_handler_provider.download_file(file_name)
