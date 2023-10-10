@@ -45,4 +45,8 @@ class FileHandlerS3Adapter(FileHandlerProvider):
             raise HTTPException(
                 status_code=error_status_code, detail=error_message)
 
-    def create_upload_url(self): ...
+    def create_upload_url(self) -> str:
+        return self._session.s3_client().generate_presigned_url(
+            'put_object',
+            Params={'Bucket': self._bucket_name, 'Key': str(uuid.uuid4())},
+            ExpiresIn=3600)

@@ -20,5 +20,11 @@ def health_check():
 
 
 @app.post("/upload")
-async def upload_file(file: UploadFile):
-    return service.upload_file(file)
+def upload_file(file: UploadFile):
+    service.upload_file(file)
+    return {"status": "Upload de arquivo concluído com sucesso!"}
+
+
+@app.post("/upload/url")
+def create_upload_url():
+    return service.create_upload_url()
