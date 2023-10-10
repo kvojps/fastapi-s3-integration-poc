@@ -1,19 +1,19 @@
-import boto3
+import boto3  # type:ignore
 import logging
 
 from typing import Any
 
 from fastapi import Depends
 
-from botocore.exceptions import ClientError
-from botocore.client import BaseClient
+from botocore.exceptions import ClientError  # type:ignore
+from botocore.client import BaseClient  # type:ignore
 
 from api.config.dynaconf import settings
 
 
 class S3Config:
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
+        self._logger = logging.getLogger(__name__)
         self._region = settings.AWS_REGION
         self._aws_access_key_id = settings.MKTPLACE_AWS_ACCESS_KEY_ID
         self._aws_secret_access_key = settings.MKTPLACE_AWS_SECRET_ACCESS_KEY

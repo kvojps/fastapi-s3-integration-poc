@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, status
 from fastapi.responses import StreamingResponse
 
 from api.service.file_handler import FileHandlerService
@@ -21,9 +21,8 @@ def health_check():
 
 
 @app.post("/upload")
-def upload_file(file: UploadFile):
+def upload_file(file: UploadFile, status_code=status.HTTP_204_NO_CONTENT):
     service.upload_file(file)
-    return {"status": "Upload de arquivo concluído com sucesso!"}
 
 
 @app.get("/upload/url")
