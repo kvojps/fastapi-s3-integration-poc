@@ -17,7 +17,7 @@ class FileHandlerS3Adapter(FileHandlerProvider):
         self._session = S3Config()
         self._bucket_name = settings.AWS_S3_BUCKET_NAME
 
-    def upload_file(self, file: UploadFile):
+    def upload_file(self, file: UploadFile) -> None:
         try:
             contents = file.file.read()
             temp_file = io.BytesIO()
@@ -33,20 +33,27 @@ class FileHandlerS3Adapter(FileHandlerProvider):
             temp_file.close()
 
         except ClientError as e:
-            error_message = e.response["message"]
-            error_code = e.response["Error"]["Code"]
-            error_status_code = e.response["ResponseMetadata"]["HTTPStatusCode"]
-
-            self._logger.error(
-                f'Upload object failed'
-                f'Error code: {error_code}, Error message: {error_message}'
-            )
-
-            raise HTTPException(
-                status_code=error_status_code, detail=error_message)
+            self._handle_exception(e)
 
     def create_upload_url(self) -> str:
-        return self._session.s3_client().generate_presigned_url(
-            'put_object',
-            Params={'Bucket': self._bucket_name, 'Key': str(uuid.uuid4())},
-            ExpiresIn=3600)
+        try:
+            return self._session.s3_client().generate_presigned_url(
+                'put_object',
+                Params={'Bucket': self._bucket_name, 'Key': str(uuid.uuid4())},
+                ExpiresIn=3600)
+
+        except ClientError as e:
+            self._handle_exception(e)
+
+    def _handle_exception(self, error: ClientError) -> None:
+        error_message = error.response["message"]
+        error_code = error.response["Error"]["Code"]
+        error_status_code = error.response["ResponseMetadata"]["HTTPStatusCode"]
+
+        self._logger.error(
+            f'Upload object failed'
+            f'Error code: {error_code}, Error message: {error_message}'
+        )
+
+        raise HTTPException(
+            status_code=error_status_code, detail=error_message)

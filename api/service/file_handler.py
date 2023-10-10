@@ -4,10 +4,10 @@ from api.port.file_handler import FileHandlerProvider
 
 
 class FileHandlerService:
-    def __init__(self, file_handler_provider: FileHandlerProvider) -> None:
+    def __init__(self, file_handler_provider: FileHandlerProvider):
         self._file_handler_provider = file_handler_provider
 
-    def upload_file(self, file: UploadFile):
+    def upload_file(self, file: UploadFile) -> None:
         self._file_handler_provider.upload_file(file)
 
     def create_upload_url(self) -> str:
