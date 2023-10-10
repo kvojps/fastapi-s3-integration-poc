@@ -1,9 +1,9 @@
 from fastapi import FastAPI, UploadFile, status
 from fastapi.responses import StreamingResponse
 
-from api.service.file_handler import FileHandlerService
+from api.services.file_handler import FileHandlerService
 
-from api.adapter.file_handler_s3_adapter import FileHandlerS3Adapter
+from api.adapters.file_handler_s3_adapter import FileHandlerS3Adapter
 
 app = FastAPI(
     title="API - Operações S3",

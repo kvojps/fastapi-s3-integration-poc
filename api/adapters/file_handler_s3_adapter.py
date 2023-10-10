@@ -6,7 +6,7 @@ import logging
 from fastapi import UploadFile, HTTPException, status
 from fastapi.responses import StreamingResponse
 
-from api.port.file_handler import FileHandlerProvider
+from api.ports.file_handler import FileHandlerProvider
 
 from api.config.aws_s3 import S3Config
 from api.config.dynaconf import settings

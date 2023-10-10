@@ -1,7 +1,7 @@
 from fastapi import UploadFile, status, HTTPException
 from fastapi.responses import StreamingResponse
 
-from api.port.file_handler import FileHandlerProvider
+from api.ports.file_handler import FileHandlerProvider
 
 
 class FileHandlerService:
